@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>AI Email Agent</title>
+  <link rel="icon" href="/static/favicon.png"/>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@300;400;500;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --blue:   #4285F4;
+      --black:  #000000;
+      --red:    #EA4335;
+      --yellow: #FBBC05;
+      --green:  #34A853;
+      --dark:   #1a1a1a;
+      --mid:    #5f6368;
+      --light:  #f8f9fa;
+      --border: #e8eaed;
+      --white:  #ffffff;
+    }
+
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--white);
+      color: var(--dark);
+      min-height: 100vh;
+    }
+
+    /* ── HEADER ── */
+    .header {
+      text-align: center;
+      padding: 2.5rem 1rem 2rem;
+      border-bottom: 1px solid var(--border);
+      position: relative;
+    }
+    .header::after {
+      content: '';
+      position: absolute;
+      bottom: -1px; left: 0; right: 0;
+      height: 3px;
+      background: linear-gradient(90deg,
+        var(--blue) 0%, var(--blue) 25%,
+        var(--red) 25%, var(--red) 50%,
+        var(--yellow) 50%, var(--yellow) 75%,
+        var(--green) 75%);
+    }
+    .site-title {
+  font-family: 'Google Sans', sans-serif;
+  font-size: 2.4rem;
+  font-weight: 700;
+  letter-spacing: -1.5px;
+  line-height: 1.2;
+  margin-bottom: 0.4rem;
+  background: linear-gradient(90deg, #4285F4, #EA4335, #FBBC05, #34A853, #4285F4, #EA4335);
+  background-size: 300% 100%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: googleSweep 5s ease-in-out infinite;
+}
+@keyframes googleSweep {
+  0%   { background-position: 0% 50%; }
+  50%  { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+    .header-sub {
+      font-family: 'Google Sans', sans-serif;
+      font-size: 0.7rem;
+      font-weight: 600;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--mid);
+      margin-bottom: 0.4rem;
+    }
+    .header-tagline {
+      font-family: 'Google Sans', sans-serif;
+      font-size: 0.95rem;
+      color: var(--mid);
+      font-weight: 300;
+    }
+
+    /* ── MAIN LAYOUT ── */
+    .main {
+      max-width: 1100px;
+      margin: 2.5rem auto;
+      padding: 0 1.5rem;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2rem;
+    }
+
+    /* ── CARDS ── */
+    .card {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 2rem;
+      position: relative;
+      overflow: hidden;
+    }
+    .card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 3px;
+    }
+    .card-left::before  { background: linear-gradient(90deg, var(--blue), var(--green)); }
+    .card-right::before { background: linear-gradient(90deg, var(--red), var(--yellow)); }
+
+    .section-tag {
+      display: inline-block;
+      font-family: 'Google Sans', sans-serif;
+      font-size: 0.7rem;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--blue);
+      background: rgba(66,133,244,0.08);
+      padding: 3px 12px;
+      border-radius: 50px;
+      margin-bottom: 1.5rem;
+    }
+
+    /* ── FORM ── */
+    .form-group { margin-bottom: 1.2rem; }
+    label {
+      display: block;
+      font-family: 'Google Sans', sans-serif;
+      font-size: 0.8rem;
+      font-weight: 500;
+      color: var(--mid);
+      margin-bottom: 0.4rem;
+      letter-spacing: 0.02em;
+    }
+    input[type="text"], input[type="email"], textarea {
+      width: 100%;
+      border: 1.5px solid var(--border);
+      border-radius: 8px;
+      padding: 10px 14px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.9rem;
+      color: var(--dark);
+      background: var(--white);
+      transition: border-color 0.2s;
+      outline: none;
+      resize: vertical;
+    }
+    input:focus, textarea:focus { border-color: var(--blue); box-shadow: 0 0 0 3px rgba(66,133,244,0.1); }
+    textarea { min-height: 80px; }
+
+    /* ── TONE PILLS ── */
+    .tone-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-top: 0.4rem;
+    }
+    .tone-pill {
+      padding: 6px 16px;
+      border: 1.5px solid var(--border);
+      border-radius: 50px;
+      font-family: 'Google Sans', sans-serif;
+      font-size: 0.8rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s;
+      background: var(--white);
+      color: var(--mid);
+    }
+    .tone-pill:hover { border-color: var(--blue); color: var(--blue); }
+    .tone-pill.active { background: var(--blue); color: white; border-color: var(--blue); }
+
+    /* ── BUTTONS ── */
+    .btn-primary {
+      width: 100%;
+      background: var(--blue);
+      color: white;
+      border: none;
+      border-radius: 50px;
+      padding: 14px;
+      font-family: 'Google Sans', sans-serif;
+      font-size: 1rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.25s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      margin-top: 1rem;
+      box-shadow: 0 2px 12px rgba(66,133,244,0.3);
+    }
+    .btn-primary:hover { background: #1a73e8; transform: translateY(-1px); box-shadow: 0 4px 20px rgba(66,133,244,0.4); }
+    .btn-primary:disabled { background: var(--border); color: var(--mid); cursor: not-allowed; transform: none; box-shadow: none; }
+
+    .btn-secondary {
+      width: 100%;
+      background: var(--border);
+      color: var(--dark);
+      border: 1.5px solid var(--border);
+      border-radius: 50px;
+      padding: 11px;
+      font-family: 'Google Sans', sans-serif;
+      font-size: 0.9rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      margin-top: 0.7rem;
+    }
+    .btn-secondary:hover { border-color: var(--black); color: var(--black); font-weight: 700; }
+
+    .btn-mail {
+      width: 100%;
+      background: var(--blue);
+      color: white;
+      border: none;
+      border-radius: 50px;
+      padding: 13px;
+      font-family: 'Google Sans', sans-serif;
+      font-size: 0.95rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.25s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      margin-top: 1rem;
+      box-shadow: 0 2px 12px rgba(66,133,244,0.3);
+      text-decoration: none;
+    }
+    .btn-mail:hover { background: #1a73e8; transform: translateY(-1px); box-shadow: 0 4px 20px rgba(66,133,244,0.4); }
+    .btn-mail.disabled { background: var(--border); color: var(--mid); pointer-events: none; box-shadow: none; }
+    .btn-mail img { display: block; box-sizing: content-box; background: transparent; border-radius: 50%; transition: background 0.2s; }
+    .btn-mail:not(.disabled) img { background: white; outline: 2px solid white; border-radius: 50%; }
+
+    /* ── OUTPUT FIELDS ── */
+    .output-field {
+      width: 100%;
+      border: 1.5px solid var(--border);
+      border-radius: 8px;
+      padding: 10px 14px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.9rem;
+      color: var(--dark);
+      background: var(--light);
+      min-height: 40px;
+    }
+    #body-output {
+      min-height: 220px;
+      resize: vertical;
+      white-space: pre-wrap;
+    }
+
+    /* ── STATUS ── */
+    .status {
+      border-radius: 8px;
+      padding: 10px 14px;
+      font-family: 'Google Sans', sans-serif;
+      font-size: 0.85rem;
+      margin-bottom: 1rem;
+      display: none;
+    }
+    .status.ok  { display: block; background: rgba(52,168,83,0.08);  border: 1px solid rgba(52,168,83,0.3);  color: #1e7e34; }
+    .status.err { display: block; background: rgba(234,67,53,0.08);  border: 1px solid rgba(234,67,53,0.3);  color: #c0392b; }
+
+    /* ── DIVIDER ── */
+    .divider {
+      border: none;
+      border-top: 1px solid var(--border);
+      margin: 1.5rem 0;
+    }
+
+    /* ── SPINNER ── */
+    .spinner {
+      display: none;
+      width: 18px; height: 18px;
+      border: 2.5px solid rgba(255,255,255,0.4);
+      border-top-color: white;
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ── FOOTER ── */
+    .footer {
+      text-align: center;
+      padding: 2rem;
+      font-family: 'Google Sans', sans-serif;
+      font-size: 0.8rem;
+      color: var(--mid);
+      border-top: 1px solid var(--border);
+      margin-top: 2rem;
+    }
+
+    @media (max-width: 768px) {
+      .main { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- HEADER -->
+  <div class="header">
+    <div class="site-title">AI Email Agent</div>
+
+    <div class="header-tagline">Describe your email · Get a polished draft · Send in one click</div>
+  </div>
+
+  <div class="main">
+
+    <!-- LEFT — INPUT -->
+    <div class="card card-left">
+      <span class="section-tag">Step 1 — Describe Your Email</span>
+
+      <div class="form-group">
+        <label>From (Your Email) *</label>
+        <input type="email" id="sender" placeholder="you@gmail.com"/>
+      </div>
+      <div class="form-group">
+        <label>To (Recipient Email) *</label>
+        <input type="email" id="recipient" placeholder="recipient@company.com"/>
+      </div>
+      <div class="form-group">
+        <label>Purpose *</label>
+        <textarea id="purpose" placeholder="e.g. Following up on my job application sent last week" rows="2"></textarea>
+      </div>
+      <div class="form-group">
+        <label>Tone</label>
+        <div class="tone-group" id="tone-group">
+          <div class="tone-pill active" data-tone="Professional">Professional</div>
+          <div class="tone-pill" data-tone="Friendly">Friendly</div>
+          <div class="tone-pill" data-tone="Assertive">Assertive</div>
+          <div class="tone-pill" data-tone="Formal">Formal</div>
+          <div class="tone-pill" data-tone="Casual">Casual</div>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Key Points (optional)</label>
+        <textarea id="key-points" placeholder="e.g. Mention 2 years experience, request a call" rows="2"></textarea>
+      </div>
+      <div class="form-group">
+        <label>Extra Context (optional)</label>
+        <textarea id="extra-context" placeholder="e.g. We met at a conference, this is a cold outreach" rows="2"></textarea>
+      </div>
+
+      <button class="btn-primary" id="draft-btn" onclick="draftEmail()">
+        <img src="/static/gemini.png" width="23" height="23" style="background:white; border-radius:50%; padding:2px;" onerror="this.style.display='none'"/>
+        <span id="draft-text">Draft Email</span>
+        <div class="spinner" id="draft-spinner"></div>
+      </button>
+    </div>
+
+    <!-- RIGHT — OUTPUT -->
+    <div class="card card-right">
+      <span class="section-tag">Step 2 — Review & Send</span>
+
+      <div class="status" id="status-box"></div>
+
+      <div class="form-group">
+        <label>Subject</label>
+        <input type="text" id="subject-output" class="output-field" placeholder="Subject will appear here..." readonly/>
+      </div>
+      <div class="form-group">
+        <label>Email Body</label>
+        <textarea id="body-output" class="output-field" placeholder="Your email draft will appear here..." readonly></textarea>
+      </div>
+
+      <a class="btn-mail disabled" id="gmail-btn" href="#" target="_blank">
+        <img src="/static/mail.png" width="20" height="20" onerror="this.style.display='none'"/>
+        Open in Mail App
+      </a>
+
+      <hr class="divider"/>
+      <span class="section-tag">Step 3 — Refine (optional)</span>
+
+      <div class="form-group">
+        <label>Refinement Instruction</label>
+        <textarea id="refinement" placeholder='e.g. "Make it shorter", "Sound more confident", "Add a call request"' rows="2"></textarea>
+      </div>
+      <button class="btn-secondary" onclick="refineEmail()">
+        <span id="refine-text">🔁 Refine Draft</span>
+        <div class="spinner" id="refine-spinner"></div>
+      </button>
+    </div>
+
+  </div>
+
+  <div class="footer">Powered by Gemini · Hosted on Hugging Face Spaces</div>
+
+  <script>
+    // Tone pills
+    let selectedTone = "Professional";
+    document.querySelectorAll(".tone-pill").forEach(pill => {
+      pill.addEventListener("click", () => {
+        document.querySelectorAll(".tone-pill").forEach(p => p.classList.remove("active"));
+        pill.classList.add("active");
+        selectedTone = pill.dataset.tone;
+      });
+    });
+
+    function setStatus(msg, isError) {
+      const box = document.getElementById("status-box");
+      box.textContent = msg;
+      box.className = "status " + (isError ? "err" : "ok");
+    }
+
+    function setLoading(btnId, spinnerId, loading) {
+      document.getElementById(btnId).disabled = loading;
+      document.getElementById(spinnerId).style.display = loading ? "block" : "none";
+    }
+
+    function updateMailBtn(mailto) {
+      const btn = document.getElementById("gmail-btn");
+      if (mailto) {
+        btn.href = mailto;
+        btn.classList.remove("disabled");
+      } else {
+        btn.href = "#";
+        btn.classList.add("disabled");
+      }
+    }
+
+    async function draftEmail() {
+      const sender = document.getElementById("sender").value.trim();
+      const recipient = document.getElementById("recipient").value.trim();
+      const purpose = document.getElementById("purpose").value.trim();
+
+      if (!sender) return setStatus("⚠️ Please enter your email address.", true);
+      if (!recipient) return setStatus("⚠️ Please enter the recipient's email.", true);
+      if (!purpose) return setStatus("⚠️ Please describe the purpose.", true);
+
+      setLoading("draft-btn", "draft-spinner", true);
+      document.getElementById("draft-text").textContent = "Drafting...";
+
+      try {
+        const res = await fetch("/draft", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            sender, recipient, purpose,
+            tone: selectedTone,
+            key_points: document.getElementById("key-points").value,
+            extra_context: document.getElementById("extra-context").value
+          })
+        });
+        const data = await res.json();
+        if (data.error) {
+          setStatus(data.error, true);
+          updateMailBtn(null);
+        } else {
+          document.getElementById("subject-output").value = data.subject;
+          document.getElementById("body-output").value = data.body;
+          setStatus("✅ Draft ready! Review and click 'Open in Mail App' to send.", false);
+          updateMailBtn(data.mailto);
+        }
+      } catch(e) {
+        setStatus("⚠️ Network error. Is the server running?", true);
+      }
+
+      setLoading("draft-btn", "draft-spinner", false);
+      document.getElementById("draft-text").textContent = "✨ Draft Email";
+    }
+
+    async function refineEmail() {
+      const subject = document.getElementById("subject-output").value;
+      const body = document.getElementById("body-output").value;
+      const recipient = document.getElementById("recipient").value.trim();
+      const instruction = document.getElementById("refinement").value.trim();
+
+      if (!body) return setStatus("⚠️ No draft to refine. Generate one first.", true);
+      if (!instruction) return setStatus("⚠️ Please enter a refinement instruction.", true);
+
+      document.getElementById("refine-text").textContent = "Refining...";
+
+      try {
+        const res = await fetch("/refine", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ subject, body, recipient, instruction })
+        });
+        const data = await res.json();
+        if (data.error) {
+          setStatus(data.error, true);
+        } else {
+          document.getElementById("subject-output").value = data.subject;
+          document.getElementById("body-output").value = data.body;
+          setStatus("✅ Refined! Review and send when ready.", false);
+          updateMailBtn(data.mailto);
+        }
+      } catch(e) {
+        setStatus("⚠️ Network error.", true);
+      }
+
+      document.getElementById("refine-text").textContent = "🔁 Refine Draft";
+    }
+  </script>
+
+</body>
+</html>
